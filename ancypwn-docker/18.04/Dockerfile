@@ -21,6 +21,7 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     socat \
     netcat \
     ruby \
+    byobu \
     lxterminal && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
@@ -36,6 +37,11 @@ RUN cd ~/ && \
     git clone https://github.com/pwndbg/pwndbg.git && \
     cd ~/pwndbg/ && ./setup.sh && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN cd ~/ && \
+    git clone https://github.com/MatthewShao/Pwngdb && \
+    echo "source /root/Pwngdb/pwngdb.py" >> /root/.gdbinit && \
+    echo "source /root/Pwngdb/angelheap/gdbinit.py" >> /root/.gdbinit
 
 ENV LANG C.UTF-8
 
