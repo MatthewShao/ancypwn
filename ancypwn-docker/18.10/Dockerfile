@@ -1,7 +1,7 @@
 FROM ubuntu:18.10
 
 MAINTAINER Anciety <anciety512@gmail.com>
-
+RUN  sed -i s@/archive.ubuntu.com/@/mirrors.ustc.edu.cn/@g /etc/apt/sources.list
 # Apt packages
 RUN dpkg --add-architecture i386 && apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qy \
@@ -21,10 +21,11 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     socat \
     netcat \
     ruby \
+    byobu \
     lxterminal && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    cd ~ && tar -xvf /usr/src/glibc/glibc-*.tar.xz
+    cd ~ && tar -xvf /usr/src/glibc/glib*.tar.xz
 
 # python/ruby packages & gdb-plugin
 RUN pip install --no-cache-dir pwntools ropper ancypatch && \
@@ -36,6 +37,11 @@ RUN cd ~/ && \
     git clone https://github.com/pwndbg/pwndbg.git && \
     cd ~/pwndbg/ && ./setup.sh && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN cd ~/ && \
+    git clone https://github.com/MatthewShao/Pwngdb && \
+    echo "source /root/Pwngdb/pwngdb.py" >> /root/.gdbinit && \
+    echo "source /root/Pwngdb/angelheap/gdbinit.py" >> /root/.gdbinit
 
 ENV LANG C.UTF-8
 
