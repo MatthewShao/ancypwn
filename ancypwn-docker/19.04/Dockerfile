@@ -1,7 +1,6 @@
-FROM ubuntu:16.04
+FROM ubuntu:19.04
 
 MAINTAINER Anciety <anciety512@gmail.com>
-
 # Apt packages
 RUN dpkg --add-architecture i386 && apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qy \
@@ -25,10 +24,11 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     lxterminal && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    cd ~ && tar -xvf /usr/src/glibc/glibc*.tar.xz
+    cd ~ && tar -xvf /usr/src/glibc/glib*.tar.xz
 
 # python/ruby packages & gdb-plugin
-RUN pip install --no-cache-dir pwntools ropper ancypatch && \
+RUN pip2 install --no-cache-dir pwntools 
+RUN pip2 install ancypatch && \
     gem install one_gadget && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

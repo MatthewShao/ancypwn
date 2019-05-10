@@ -1,10 +1,10 @@
-FROM ubuntu:16.04
-
+FROM ubuntu:zesty
 MAINTAINER Anciety <anciety512@gmail.com>
-
+RUN  sed -i s@/archive.ubuntu.com/@/old-releases.ubuntu.com/@g /etc/apt/sources.list
+RUN sed -i '/security/d' /etc/apt/sources.list
 # Apt packages
-RUN dpkg --add-architecture i386 && apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -qy \
+RUN dpkg --add-architecture i386 && apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qy \
     git nasm  python \
     build-essential \
     python-dev python-pip python-setuptools \
@@ -28,7 +28,7 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     cd ~ && tar -xvf /usr/src/glibc/glibc*.tar.xz
 
 # python/ruby packages & gdb-plugin
-RUN pip install --no-cache-dir pwntools ropper ancypatch && \
+RUN pip install --no-cache-dir pwntools ancypatch && \
     gem install one_gadget && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
