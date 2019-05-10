@@ -45,6 +45,8 @@ RUN cd ~/ && \
 
 ENV LANG C.UTF-8
 
+COPY ./notiterm.py /usr/local/bin/notiterm
+
 VOLUME ["/pwn"]
 WORKDIR /pwn
 

@@ -12,6 +12,7 @@ import struct
 import signal
 import subprocess as sp
 from .notify.server import ServerProcess
+from daemonize import Daemonize
 
 from distutils.dir_util import mkpath
 
@@ -125,6 +126,14 @@ def parse_args():
         parser.print_usage()
 
 
+def _kill_server_daemon():
+    with open(DAEMON_PID, 'r') as f:
+        pid = int(f.read())
+
+    os.kill(pid, signal.SIGTERM)
+    os.remove(DAEMON_PID)
+
+
 def _get_terminal_size():
     p = sp.Popen('tput cols', shell=True, stdout=sp.PIPE)
     def _print_warning():
@@ -210,15 +219,19 @@ def run_pwn(args):
         raise IOError('No such directory')
 
     if os.path.exists(EXIST_FLAG):
-        raise AlreadyRuningException('ancypwn is already running, you should either end it  to run again or attach it')
+        raise AlreadyRuningException('ancypwn is already running, you should either end it to run again or attach it')
 
     # run server before dealing with docker
     child_pid = os.fork()
     if child_pid == 0:
         # sub process
-        server = ServerProcess(DAEMON_PID, port, daemon=True)
-        server.start()
-        server.join() # hold it!
+        def start_server():
+            server = ServerProcess(port, daemon=True)
+            server.start()
+            server.join() # hold it!
+
+        daemon = Daemonize(app='ancypwn_server', pid=DAEMON_PID, action=start_server)
+        daemon.start()
         return
 
     privileged = True if args.priv else False
@@ -265,7 +278,11 @@ def run_pwn(args):
     except Exception as e:
         print('Ancypwn unable to run docker container')
         print('please refer to documentation to correctly setup your environment')
-        print()
+        print('or check your local environment is good for docker')
+
+        # stop running server
+
+        _kill_server_daemon()
         raise e
 
     # Set flag, save the container id
@@ -302,12 +319,7 @@ def end_pwn(args):
     conts[0].stop()
     os.remove(EXIST_FLAG)
 
-    with open(DAEMON_PID, 'r') as f:
-        pid = int(f.read())
-
-    # kill server daemon
-    os.kill(pid, signal.SIGTERM)
-    os.remove(DAEMON_PID)
+    _kill_server_daemon()
 
 
 def main():
