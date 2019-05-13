@@ -29,7 +29,7 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     cd ~ && tar -xvf /usr/src/glibc/glib*.tar.xz
 
 # python/ruby packages & gdb-plugin
-RUN pip install --no-cache-dir pwntools ropper ancypatch && \
+RUN pip install --no-cache-dir pwntools ancypatch && \
     gem install one_gadget && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
