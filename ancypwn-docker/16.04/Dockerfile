@@ -28,8 +28,10 @@ RUN dpkg --add-architecture i386 && apt-get update && \
     cd ~ && tar -xvf /usr/src/glibc/glibc*.tar.xz
 
 # python/ruby packages & gdb-plugin
-RUN pip install --no-cache-dir pwntools ancypatch && \
-    gem install one_gadget && \
+RUN pip install --no-cache-dir pwntools && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN pip install --no-cache-dir ancypatch && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # git installaing package
